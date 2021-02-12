@@ -11,6 +11,7 @@
     <ul>
       <li>Componentize the SVG canvas.</li>
       <li>Componentize the SVG drag and drop stuff.</li>
+      <li>Add pan and zoom to the SVG canvas.</li>
       <li>Allow for recursive drawing inside chosen inner circles.</li>
       <li>Printing would be nice.</li>
       <li>Style this thing, make it look nicer.</li>
@@ -23,10 +24,10 @@
         where the last circle was drawn.
       </li>
       <li>
-        Maybe crate a back end some time to save the settings use to create a
+        Maybe create a back end some time to save the settings use to create a
         particular drawing.
       </li>
-      <li>Well, make all the other ddrawing things work also...</li>
+      <li>Well, make all the other drawing things work also...</li>
       <li>Dream up new stuff to do...</li>
     </ul>
   </div>
