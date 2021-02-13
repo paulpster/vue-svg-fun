@@ -114,20 +114,6 @@ export default class TestBed extends Vue {
   aoffsX = 0;
   aoffsY = 0;
 
-  appClassic: Array<Circle> = [
-    { x: 0, y: 0, b: -1 },
-    { x: 0.5, y: 0, b: 2 },
-    { x: -0.5, y: 0, b: 2 },
-    { x: 0, y: 2 / 3, b: 3 },
-    { x: 0, y: -2 / 3, b: 3 }
-  ];
-  classWork: Array<Work> = [
-    { cir: 3, depth: 1, parents: [0, 1, 2] },
-    { cir: 4, depth: 1, parents: [0, 1, 2] }
-  ];
-
-  // i need to generate coordinates and radii to place circles...
-  // cx, cy, r, fill, stroke, stroke-width
   // this is a bootstrapped array
   arrCir: Array<Circle> = [
     { x: 0, y: 0, b: -1 },
@@ -142,7 +128,7 @@ export default class TestBed extends Vue {
     { cir: 4, depth: 1, parents: [0, 1, 2] }
   ];
 
-  onDragStart(ev: MouseEvent) {
+  onDragStart(ev: MouseEvent): void {
     console.log("onDragStart");
     // the target is an element, i guess i need to cast target into the type i want
     if (ev.target) {
@@ -150,9 +136,7 @@ export default class TestBed extends Vue {
       if (c.classList.contains("svgdrag")) {
         this.dragging = c;
         // drag begin stuff
-        this.work = [];
-        this.arrCir.pop();
-        this.arrCir.pop();
+        this.onStart();
 
         const ctm = c.getScreenCTM();
         if (ctm) {
@@ -173,13 +157,6 @@ export default class TestBed extends Vue {
       console.log("onDragEnd");
       console.log(`Curr: ${this.hndX} ${this.hndY}`);
       this.onDrop();
-      //const c: SVGGElement = ev.currentTarget as SVGGElement;
-      //const ctm = c.getScreenCTM();
-      //if (ctm) {
-      //  console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
-      //} else {
-      //  console.log("no CTM");
-      //}
     }
     if (ev.target && this.dragAngle) {
       this.dragAngle = null;
@@ -189,16 +166,13 @@ export default class TestBed extends Vue {
     }
     return;
   }
-  onDrag(ev: MouseEvent) {
+  onDrag(ev: MouseEvent): void {
     if (this.dragging && ev.currentTarget) {
-      //console.log("onDrag");
       ev.preventDefault();
       const c: SVGGElement = ev.currentTarget as SVGGElement;
       // in my case the CTM does not seem to change with element position
       const ctm = c.getScreenCTM();
       if (ctm) {
-        //this.hndX = this.doffsX + (ev.clientX - ctm.e) / ctm.a;
-        //this.hndY = this.doffsY + (ev.clientY - ctm.f) / ctm.d;
         // really want a call back of some kind where i give it where the pointer is
         //    and i get returned where i want the resulting SVG coord to be.
         //    This will allow me to contrain movements to a line or box or arc or...
@@ -221,9 +195,7 @@ export default class TestBed extends Vue {
       if (c.classList.contains("svgdrag")) {
         this.dragAngle = c;
         // drag begin stuff
-        this.work = [];
-        this.arrCir.pop();
-        this.arrCir.pop();
+        this.onStart();
 
         const ctm = c.getScreenCTM();
         if (ctm) {
@@ -247,9 +219,8 @@ export default class TestBed extends Vue {
     }
     return;
   }
-  onDragAngle(ev: MouseEvent) {
+  onDragAngle(ev: MouseEvent): void {
     if (this.dragAngle && ev.currentTarget) {
-      //console.log("onDrag");
       ev.preventDefault();
       const c: SVGGElement = ev.currentTarget as SVGGElement;
       // in my case the CTM does not seem to change with element position
@@ -266,19 +237,26 @@ export default class TestBed extends Vue {
     }
     return;
   }
-  onDrop() {
+  onStart(): void {
+    this.work = [];
+    this.arrCir.pop();
+    this.arrCir.pop();
+  }
+  onDrop(): void {
     console.log("onDrop");
     // the end of all dragging
     const ret = newCircles(this.arrCir[0], this.arrCir[1], this.arrCir[2]);
     // there is probably a 'clean code' way of doing this.
     this.arrCir.push(ret[0]);
     this.arrCir.push(ret[1]);
-    this.work.push({ cir: 3, depth: 1, parents: [0, 1, 2] });
-    this.work.push({ cir: 4, depth: 1, parents: [0, 1, 2] });
+    this.work = [
+      { cir: 3, depth: 1, parents: [0, 1, 2] },
+      { cir: 4, depth: 1, parents: [0, 1, 2] }
+    ];
 
     return;
   }
-  onDragOver() {
+  onDragOver(): void {
     console.log("onDragOver");
     // prevent default
     return;
@@ -315,12 +293,14 @@ export default class TestBed extends Vue {
 
     // limit the angle....
     if (Math.abs(slope) > 10) {
-      curX = this.arrCir[2].x - (this.arrCir[2].y - curY) / 10;
+      curX =
+        this.arrCir[2].x - (this.arrCir[2].y - curY) / (Math.sign(slope) * 10);
     }
-    const result = getOffAxisCircle(this.arrCir[2], { x: curX, y: curY, b: 0 });
-    this.arrCir[1].x = result.x;
-    this.arrCir[1].y = result.y;
-    this.arrCir[1].b = result.b;
+    this.arrCir[1] = getOffAxisCircle(this.arrCir[2], {
+      x: curX,
+      y: curY,
+      b: 0
+    });
 
     // examine the math on this for simplifications (bend vs radius)
     // TODO: these should probably be get type functions
