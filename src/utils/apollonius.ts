@@ -165,10 +165,12 @@ export function newCircles(
   c1: Circle,
   c2: Circle,
   c3: Circle
-): [Circle | undefined, Circle | undefined] {
+): [Circle, Circle] {
   // will need to add some brains here for the case that circles are inside of others.
   // the radius of encompassing circles are NEGATIVE
   // one of our circles may be a line....
+  // this will no longer be for general use. i intend to use this for the first pair
+  //    of circles only
 
   //console.log(
   //  `InpCircles: ${c1.x},${c1.y} r:${c1.r};  ${c2.x},${c2.y} r:${c2.r};  ${c3.x},${c3.y} r:${c3.r};`
@@ -182,12 +184,11 @@ export function newCircles(
   const newB: [number, number] = newBend(c1.b, c2.b, c3.b);
   // resulting bends that are negative are on the OUTSIDE of other circles
 
-  // the bend i really want is the larger one (smaller radius), i do not want the circumscribed circle
   //console.log(`Bends: ${newB}`);
   const b4 = newB[0];
-  const a = new Complex((b4 * b4) / 2, 0);
+  let a = new Complex((b4 * b4) / 2, 0);
   const d = bz1.add(bz2).add(bz3);
-  const b = d.mul(-b4, 0);
+  let b = d.mul(-b4, 0);
   const c = bz1
     .mul(bz1)
     .add(bz2.mul(bz2))
@@ -195,24 +196,18 @@ export function newCircles(
     .sub(d.mul(d).div(2, 0));
 
   //console.log(`Constants: ${a} ${b} ${c} ${d}`);
+  // only [0] is useful
   const z4: [Complex, Complex] = quadraticRoot(a, b, c);
-  //console.log(`New Coords: ${z4[0]} ${z4[1]}`);
-  // most of the time only one of the two answers i get are going to be useful
-  //  how to get the right one?
-  const ret: [Circle | undefined, Circle | undefined] = [undefined, undefined];
-  if (inTriangle({ x: z4[0].re, y: z4[0].im, b: b4 }, c1, c2, c3)) {
-    //console.log("first in triangle");
-    ret[0] = { x: z4[0].re, y: z4[0].im, b: b4 };
-    if (inTriangle({ x: z4[1].re, y: z4[1].im, b: b4 }, c1, c2, c3)) {
-      //console.log("plus second");
-      ret[1] = { x: z4[1].re, y: z4[1].im, b: b4 };
-    }
-  } else if (inTriangle({ x: z4[1].re, y: z4[1].im, b: b4 }, c1, c2, c3)) {
-    //console.log("second in triangle");
-    ret[0] = { x: z4[1].re, y: z4[1].im, b: b4 };
-  }
+  // now for hte other circle
+  a = new Complex((newB[1] * newB[1]) / 2, 0);
+  b = d.mul(-newB[1], 0);
+  const z4p: [Complex, Complex] = quadraticRoot(a, b, c);
 
-  return ret;
+  // trial and error told me which z4, z4p combination works
+  return [
+    { x: z4[1].re, y: z4[1].im, b: b4 },
+    { x: z4p[0].re, y: z4p[0].im, b: newB[1] }
+  ];
 }
 export function getCircle(
   c1: Circle,
