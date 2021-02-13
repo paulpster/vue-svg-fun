@@ -445,7 +445,7 @@ export function getOffAxisCircle(inner: Circle, poss: Circle): Circle {
       // circle needs to be smaller
       maxR = currR;
     } else {
-      // circle need s to be bigger
+      // circle needs to be bigger
       minR = currR;
     }
     currR = (minR + maxR) / 2;
