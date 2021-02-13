@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Apolonian circle packing</h2>
+    <h2>Apolonian Circle Packing</h2>
     <div style="display:flex;">
       <div>
         <svg
