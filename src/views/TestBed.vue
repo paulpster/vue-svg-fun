@@ -143,7 +143,7 @@ export default class TestBed extends Vue {
 
         const ctm = c.getScreenCTM();
         if (ctm) {
-          console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
+          //console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
           // i think i need to take into account the current location of the element....
           this.doffsX = this.hndX - (ev.clientX - ctm.e) / ctm.a;
           this.doffsY = this.hndY - (ev.clientY - ctm.f) / ctm.d;
@@ -279,8 +279,6 @@ export default class TestBed extends Vue {
       dist = MAX_RADIUS;
     }
     this.arrCir[2] = { x: dist - 1, y: 0, b: 1 / dist };
-    //this.arrCir[2].b = 1 / dist;
-    //this.arrCir[2].x = dist - 1;
 
     //console.log(
     //  `onSzDrag: ${this.arrCir[2].x} ${this.arrCir[2].y} ${this.arrCir[2].b}`
