@@ -1,7 +1,7 @@
 # svg_fun
 
 To Apollonius: added some drag and drop elements to allow initial configuration of the circles.
-The resizing of the left cirlce can be a bit rough at times. I am tryinn to sort that out.
+The resizing of the left cirlce can be a bit rough at times. I am trying to sort that out.
 
 ## Project setup
 
