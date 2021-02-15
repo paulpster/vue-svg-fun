@@ -55,7 +55,7 @@
               class="handle"
               v-bind:cx="hndX"
               v-bind:cy="hndY"
-              v-bind:r="5 * strokeWid"
+              v-bind:r="20 * strokeWid"
               v-bind:stroke-width="strokeWid"
             />
           </g>
@@ -96,6 +96,9 @@ import { getOffAxisCircle, Circle, Work, newCircles } from "@/utils/apollonius";
 
 // i would like to have a resizeable SVG component
 //  zoom and panning would be nice
+const MAX_SLOPE = 10;
+const MAX_RADIUS = 0.9;
+const MIN_RADIUS = 0.1;
 
 @Component({ components: {} })
 export default class TestBed extends Vue {
@@ -175,7 +178,7 @@ export default class TestBed extends Vue {
       if (ctm) {
         // really want a call back of some kind where i give it where the pointer is
         //    and i get returned where i want the resulting SVG coord to be.
-        //    This will allow me to contrain movements to a line or box or arc or...
+        //    This will allow me to constrain movements to a line or box or arc or...
         this.onSzDrag(
           this.doffsX + (ev.clientX - ctm.e) / ctm.a,
           this.doffsY + (ev.clientY - ctm.f) / ctm.d
@@ -262,39 +265,36 @@ export default class TestBed extends Vue {
     return;
   }
   onSzDrag(curX: number, curY: number): void {
-    /*
-    // this works ONLY if both circles are on the X-axis
-    //  off axis is more difficult
-    //need a min and max size for the left hand circle
     this.hndX = curX;
-    // -1 is the left edge of the outer circle.
-    this.cirLX = -1 + (curX + 1) / 2;
-    this.cirLR = (curX + 1) / 2;
-    // 1 is the right edge of the outer circle
-    this.cirRX = 1 - (1 - curX) / 2;
-    this.cirRR = (1 - curX) / 2;
-    */
+    this.hndY = curY;
     let dist = Math.sqrt(
       (curX - this.arrCir[2].x) * (curX - this.arrCir[2].x) +
         (curY - this.arrCir[2].y) * (curY - this.arrCir[2].y)
     );
-    if (dist < 0.1) {
-      dist = 0.1;
+    //console.log(`dist: ${dist} ${curX} ${curY}`);
+    if (dist < MIN_RADIUS) {
+      dist = MIN_RADIUS;
     }
-    if (dist > 0.9) {
-      dist = 0.9;
+    if (dist > MAX_RADIUS) {
+      dist = MAX_RADIUS;
     }
-    this.arrCir[2].b = 1 / dist;
-    this.arrCir[2].x = dist - 1;
-    this.onAngleDrag(this.arrCir[1].x, this.arrCir[1].y);
+    this.arrCir[2] = { x: dist - 1, y: 0, b: 1 / dist };
+    //this.arrCir[2].b = 1 / dist;
+    //this.arrCir[2].x = dist - 1;
+
+    //console.log(
+    //  `onSzDrag: ${this.arrCir[2].x} ${this.arrCir[2].y} ${this.arrCir[2].b}`
+    //);
+    //this.onAngleDrag(this.arrCir[1].x, this.arrCir[1].y);
   }
   onAngleDrag(curX: number, curY: number): void {
     const slope = (this.arrCir[2].y - curY) / (this.arrCir[2].x - curX);
 
     // limit the angle....
-    if (Math.abs(slope) > 10) {
+    if (Math.abs(slope) > MAX_SLOPE) {
       curX =
-        this.arrCir[2].x - (this.arrCir[2].y - curY) / (Math.sign(slope) * 10);
+        this.arrCir[2].x -
+        (this.arrCir[2].y - curY) / (Math.sign(slope) * MAX_SLOPE);
     }
     this.arrCir[1] = getOffAxisCircle(this.arrCir[2], {
       x: curX,
@@ -312,6 +312,7 @@ export default class TestBed extends Vue {
       this.arrCir[2].y +
       ((1 / this.arrCir[2].b) * (this.arrCir[1].y - this.arrCir[2].y)) /
         (1 / this.arrCir[2].b + 1 / this.arrCir[1].b);
+    console.log(`onAngleDrag ${this.hndX} ${this.hndY}`);
   }
 
   // computed
