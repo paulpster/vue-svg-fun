@@ -51,7 +51,7 @@
 
 */
 
-import { assert } from "chai";
+//import { assert } from "chai";
 import Complex from "complex.js";
 
 // parents are the index in the master list of cirlces
@@ -157,7 +157,17 @@ export function newBend(b1: number, b2: number, b3: number): [number, number] {
   const b = b1 + b2 + b3;
   const c = b1 * b1 + b2 * b2 + b3 * b3 - (b * b) / 2;
 
-  const s = Math.sqrt(b * b - 2 * c);
+  //console.log(`newBend: ${b} ${c} ${b * b - 2 * c}`);
+  // on occasion b * b - 2 * c is negative and a small number
+  //    i think this happens when i have symmetry on the x-axis
+  //    AND because of imperfect number crunching (the nature of
+  //    floating point representation in computers)
+  let tmp = b * b - 2 * c;
+  // making the executive decision to make tmp 0 if ist is very small and negative
+  if (tmp < 0 && tmp * -500 < 1) {
+    tmp = 0;
+  }
+  const s = Math.sqrt(tmp);
   return [b + s, b - s];
 }
 
@@ -173,14 +183,14 @@ export function newCircles(
   //    of circles only
 
   //console.log(
-  //  `InpCircles: ${c1.x},${c1.y} r:${c1.r};  ${c2.x},${c2.y} r:${c2.r};  ${c3.x},${c3.y} r:${c3.r};`
+  //  `InpCircles: ${c1.x},${c1.y} b:${c1.b};  ${c2.x},${c2.y} b:${c2.b};  ${c3.x},${c3.y} b:${c3.b};`
   //);
   const bz1 = new Complex(c1.x, c1.y).mul(c1.b, 0);
   const bz2 = new Complex(c2.x, c2.y).mul(c2.b, 0);
   const bz3 = new Complex(c3.x, c3.y).mul(c3.b, 0);
 
   //console.log(`BZs ${bz1} ${bz2} ${bz3}`);
-  //console.log(`myBends: ${b1} ${b2} ${b3}`);
+  //console.log(`myBends: ${c1.b} ${c2.b} ${c3.b}`);
   const newB: [number, number] = newBend(c1.b, c2.b, c3.b);
   // resulting bends that are negative are on the OUTSIDE of other circles
 
@@ -198,7 +208,7 @@ export function newCircles(
   //console.log(`Constants: ${a} ${b} ${c} ${d}`);
   // only [0] is useful
   const z4: [Complex, Complex] = quadraticRoot(a, b, c);
-  // now for hte other circle
+  // now for the other circle
   a = new Complex((newB[1] * newB[1]) / 2, 0);
   b = d.mul(-newB[1], 0);
   const z4p: [Complex, Complex] = quadraticRoot(a, b, c);
@@ -229,10 +239,10 @@ export function getCircle(
   const bz3 = new Complex(c3.x, c3.y).mul(c3.b, 0);
   const bz4p = new Complex(c4.x, c4.y).mul(c4.b, 0);
 
-  const sum = bz1.add(bz2).add(bz3);
-  const s2 = sum.mul(2, 0);
-  const sub = s2.sub(bz4p);
-  const z4t = sub.div(newB[0], 0);
+  //const sum = bz1.add(bz2).add(bz3);
+  //const s2 = sum.mul(2, 0);
+  //const sub = s2.sub(bz4p);
+  //const z4t = sub.div(newB[0], 0);
 
   const z4 = bz1
     .add(bz2)
@@ -241,9 +251,6 @@ export function getCircle(
     .sub(bz4p)
     .div(newB[0], 0);
 
-  assert(newB[1] === c4.b);
-  //console.log(`z4: ${z4} z4t: ${z4t}`);
-  assert(z4.toString() === z4t.toString());
   return { x: z4.re, y: z4.im, b: newB[0] };
 }
 
