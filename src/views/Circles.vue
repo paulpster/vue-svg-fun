@@ -278,14 +278,14 @@ export default class Circles extends Vue {
         // really want a call back of some kind where i give it where the pointer is
         //    and i get returned where i want the resulting SVG coord to be.
         //    This will allow me to contrain movements to a line or box or arc or...
-        this.onSzDrag(
+        return this.onSzDrag(
           this.doffsX + (ev.clientX - ctm.e) / ctm.a,
           this.doffsY + (ev.clientY - ctm.f) / ctm.d
         );
       }
     }
     if (this.dragAngle && ev.currentTarget) {
-      this.onDragAngle(ev);
+      return this.onDragAngle(ev);
     }
     return;
   }
@@ -364,30 +364,21 @@ export default class Circles extends Vue {
     return;
   }
   onSzDrag(curX: number, curY: number): void {
-    /*
-    // this works ONLY if both circles are on the X-axis
-    //  off axis is more difficult
-    //need a min and max size for the left hand circle
+    // this seems redundant since it is recalculated in onAngleDrag,
+    //    but the drag is much smoother with it.
     this.hndX = curX;
-    // -1 is the left edge of the outer circle.
-    this.cirLX = -1 + (curX + 1) / 2;
-    this.cirLR = (curX + 1) / 2;
-    // 1 is the right edge of the outer circle
-    this.cirRX = 1 - (1 - curX) / 2;
-    this.cirRR = (1 - curX) / 2;
-    */
-    let dist = Math.sqrt(
-      (curX - this.arrCir[2].x) * (curX - this.arrCir[2].x) +
-        (curY - this.arrCir[2].y) * (curY - this.arrCir[2].y)
-    );
-    if (dist < MIN_RADIUS) {
-      dist = MIN_RADIUS;
+    this.hndY = curY;
+    // the distance from curX, curY to arrCir[2] center
+    // is equal to arrCir[2] center to -1, 0
+    let xi = (curX * curX + curY * curY - 1) / (2 + 2 * curX);
+    if (xi + 1 < MIN_RADIUS) {
+      xi = MIN_RADIUS - 1;
     }
-    if (dist > MAX_RADIUS) {
-      dist = MAX_RADIUS;
+    if (xi + 1 > MAX_RADIUS) {
+      xi = MAX_RADIUS - 1;
     }
-    this.arrCir[2].b = 1 / dist;
-    this.arrCir[2].x = dist - 1;
+    this.arrCir[2] = { x: xi, y: 0, b: 1 / (xi + 1) };
+
     this.onAngleDrag(this.arrCir[1].x, this.arrCir[1].y);
   }
   onAngleDrag(curX: number, curY: number): void {

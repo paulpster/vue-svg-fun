@@ -55,7 +55,7 @@
               class="handle"
               v-bind:cx="hndX"
               v-bind:cy="hndY"
-              v-bind:r="20 * strokeWid"
+              v-bind:r="5 * strokeWid"
               v-bind:stroke-width="strokeWid"
             />
           </g>
@@ -158,7 +158,7 @@ export default class TestBed extends Vue {
     if (ev.target && this.dragging) {
       this.dragging = null;
       console.log("onDragEnd");
-      console.log(`Curr: ${this.hndX} ${this.hndY}`);
+      console.log(`DE Curr: ${this.hndX} ${this.hndY}`);
       this.onDrop();
     }
     if (ev.target && this.dragAngle) {
@@ -179,14 +179,17 @@ export default class TestBed extends Vue {
         // really want a call back of some kind where i give it where the pointer is
         //    and i get returned where i want the resulting SVG coord to be.
         //    This will allow me to constrain movements to a line or box or arc or...
-        this.onSzDrag(
+        return this.onSzDrag(
           this.doffsX + (ev.clientX - ctm.e) / ctm.a,
           this.doffsY + (ev.clientY - ctm.f) / ctm.d
         );
       }
     }
     if (this.dragAngle && ev.currentTarget) {
-      this.onDragAngle(ev);
+      return this.onDragAngle(ev);
+    }
+    if (this.dragging) {
+      console.log("dragging no target");
     }
     return;
   }
@@ -267,23 +270,20 @@ export default class TestBed extends Vue {
   onSzDrag(curX: number, curY: number): void {
     this.hndX = curX;
     this.hndY = curY;
-    let dist = Math.sqrt(
-      (curX - this.arrCir[2].x) * (curX - this.arrCir[2].x) +
-        (curY - this.arrCir[2].y) * (curY - this.arrCir[2].y)
-    );
-    //console.log(`dist: ${dist} ${curX} ${curY}`);
-    if (dist < MIN_RADIUS) {
-      dist = MIN_RADIUS;
+    let xi = (curX * curX + curY * curY - 1) / (2 + 2 * curX);
+    //console.log(`dist: ${xi} ${curX} ${curY}`);
+    if (xi + 1 < MIN_RADIUS) {
+      xi = MIN_RADIUS - 1;
     }
-    if (dist > MAX_RADIUS) {
-      dist = MAX_RADIUS;
+    if (xi + 1 > MAX_RADIUS) {
+      xi = MAX_RADIUS - 1;
     }
-    this.arrCir[2] = { x: dist - 1, y: 0, b: 1 / dist };
+    this.arrCir[2] = { x: xi, y: 0, b: 1 / (xi + 1) };
 
     //console.log(
     //  `onSzDrag: ${this.arrCir[2].x} ${this.arrCir[2].y} ${this.arrCir[2].b}`
     //);
-    //this.onAngleDrag(this.arrCir[1].x, this.arrCir[1].y);
+    this.onAngleDrag(this.arrCir[1].x, this.arrCir[1].y);
   }
   onAngleDrag(curX: number, curY: number): void {
     const slope = (this.arrCir[2].y - curY) / (this.arrCir[2].x - curX);
@@ -310,7 +310,7 @@ export default class TestBed extends Vue {
       this.arrCir[2].y +
       ((1 / this.arrCir[2].b) * (this.arrCir[1].y - this.arrCir[2].y)) /
         (1 / this.arrCir[2].b + 1 / this.arrCir[1].b);
-    console.log(`onAngleDrag ${this.hndX} ${this.hndY}`);
+    //console.log(`onAngleDrag ${this.hndX} ${this.hndY}`);
   }
 
   // computed
