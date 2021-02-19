@@ -12,5 +12,8 @@
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
 
+// https://mathworld.wolfram.com/Hypotrochoid.html
+// http://sub.blue/
+
 export default class Spiro extends Vue {}
 </script>
