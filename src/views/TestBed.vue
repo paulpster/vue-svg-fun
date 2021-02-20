@@ -124,118 +124,6 @@ export default class TestBed extends Vue {
     { cir: 4, depth: 1, parents: [0, 1, 2] }
   ];
 
-  onDragStart(ev: MouseEvent): void {
-    console.log("onDragStart");
-    // the target is an element, i guess i need to cast target into the type i want
-    if (ev.target) {
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      if (c.classList.contains("svgdrag")) {
-        this.dragging = c;
-        // drag begin stuff
-        this.onStart();
-
-        const ctm = c.getScreenCTM();
-        if (ctm) {
-          //console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
-          // i think i need to take into account the current location of the element....
-          this.doffsX = this.hndX - (ev.clientX - ctm.e) / ctm.a;
-          this.doffsY = this.hndY - (ev.clientY - ctm.f) / ctm.d;
-          console.log(`Init Grab: ${this.doffsX} ${this.doffsY}`);
-        } else {
-          console.log("no CTM");
-        }
-      }
-    }
-  }
-  onDragEnd(ev: MouseEvent): void {
-    if (ev.target && this.dragging) {
-      this.dragging = null;
-      console.log("onDragEnd");
-      console.log(`DE Curr: ${this.hndX} ${this.hndY}`);
-      this.onDrop();
-    }
-    if (ev.target && this.dragAngle) {
-      this.dragAngle = null;
-      console.log("onDragAngleEnd");
-      console.log(`DEACurr: ${this.arrCir[1].x} ${this.arrCir[1].y}`);
-      this.onDrop();
-    }
-    return;
-  }
-  onDrag(ev: MouseEvent): void {
-    if (this.dragging && ev.currentTarget) {
-      ev.preventDefault();
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      // in my case the CTM does not seem to change with element position
-      const ctm = c.getScreenCTM();
-      if (ctm) {
-        // really want a call back of some kind where i give it where the pointer is
-        //    and i get returned where i want the resulting SVG coord to be.
-        //    This will allow me to constrain movements to a line or box or arc or...
-        return this.onSzDrag(
-          this.doffsX + (ev.clientX - ctm.e) / ctm.a,
-          this.doffsY + (ev.clientY - ctm.f) / ctm.d
-        );
-      }
-    }
-    if (this.dragAngle && ev.currentTarget) {
-      return this.onDragAngle(ev);
-    }
-    if (this.dragging) {
-      console.log("dragging no target");
-    }
-    return;
-  }
-  onDragStartAngle(ev: MouseEvent) {
-    console.log("onDragStart");
-    // the target is an element, i guess i need to cast target into the type i want
-    if (ev.target) {
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      if (c.classList.contains("svgdrag")) {
-        this.dragAngle = c;
-        // drag begin stuff
-        this.onStart();
-
-        const ctm = c.getScreenCTM();
-        if (ctm) {
-          //console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
-          // i think i need to take into account the current location of the element....
-          this.aoffsX = this.arrCir[1].x - (ev.clientX - ctm.e) / ctm.a;
-          this.aoffsY = this.arrCir[1].y - (ev.clientY - ctm.f) / ctm.d;
-          console.log(`Init Angle Grab: ${this.aoffsX} ${this.aoffsY}`);
-        } else {
-          console.log("no CTM");
-        }
-      }
-    }
-  }
-  onDragEndAngle(ev: MouseEvent): void {
-    if (ev.target && this.dragging) {
-      this.dragAngle = null;
-      console.log("onDragEndAngle");
-      console.log(`ACurr: ${this.arrCir[1].x} ${this.arrCir[1].y}`);
-      this.onDrop();
-    }
-    return;
-  }
-  onDragAngle(ev: MouseEvent): void {
-    if (this.dragAngle && ev.currentTarget) {
-      ev.preventDefault();
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      // in my case the CTM does not seem to change with element position
-      const ctm = c.getScreenCTM();
-      if (ctm) {
-        // really want a call back of some kind where i give it where the pointer is
-        //    and i get returned where i want the resulting SVG coord to be.
-        //    This will allow me to contrain movements to a line or box or arc or...
-        this.onAngleDrag(
-          this.aoffsX + (ev.clientX - ctm.e) / ctm.a,
-          this.aoffsY + (ev.clientY - ctm.f) / ctm.d
-        );
-      }
-    }
-    return;
-  }
   onStart(): void {
     this.work = [];
     this.arrCir.pop();
@@ -307,9 +195,6 @@ export default class TestBed extends Vue {
   }
 
   // computed
-  get vwBox() {
-    return `${this.upLeft} ${this.upLeft} ${this.sqSize} ${this.sqSize}`;
-  }
   get strokeWid() {
     return this.sqSize / this.svgWid;
   }
