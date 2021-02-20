@@ -3,16 +3,7 @@
     <h2>Test Bed</h2>
     <div style="display:flex;">
       <div>
-        <svg
-          id="mysvg"
-          xmlns="http://www.w3.org/2000/svg"
-          v-bind:width="svgWid"
-          v-bind:height="svgHgt"
-          v-bind:viewBox="vwBox"
-          v-on:mouseleave="onDragEnd"
-          v-on:mouseup="onDragEnd"
-          v-on:mousemove="onDrag"
-        >
+        <SVGComponent v-bind:param="SVGParam">
           <circle
             v-for="(c, idx) in arrCir"
             v-bind:key="idx"
@@ -45,11 +36,11 @@
             v-bind:stroke-width="strokeWid"
           />
 
-          <g
-            class="svgdrag"
-            v-on:mousedown="onDragStart"
-            v-on:mouseup="onDragEnd"
-            v-on:mousemove="onDrag"
+          <SVGDrag
+            name="size"
+            v-on:on-begin-drag="onStart"
+            v-on:on-drop="onDrop"
+            v-on:on-dragging="onSzDrag"
           >
             <circle
               class="handle"
@@ -58,12 +49,12 @@
               v-bind:r="5 * strokeWid"
               v-bind:stroke-width="strokeWid"
             />
-          </g>
-          <g
-            class="svgdrag"
-            v-on:mousedown="onDragStartAngle"
-            v-on:mouseup="onDragEndAngle"
-            v-on:mousemove="onDragAngle"
+          </SVGDrag>
+          <SVGDrag
+            name="angle"
+            v-on:on-begin-drag="onStart"
+            v-on:on-drop="onDrop"
+            v-on:on-dragging="onAngleDrag"
           >
             <circle
               class="handle"
@@ -72,8 +63,8 @@
               v-bind:r="5 * strokeWid"
               v-bind:stroke-width="strokeWid"
             />
-          </g>
-        </svg>
+          </SVGDrag>
+        </SVGComponent>
       </div>
     </div>
   </div>
@@ -92,6 +83,8 @@
 //
 
 import { Vue, Component } from "vue-property-decorator";
+import SVGComponent, { SVGConfig } from "@/components/SVG.vue";
+import SVGDrag from "@/components/SVGDrag.vue";
 import { getOffAxisCircle, Circle, Work, newCircles } from "@/utils/apollonius";
 
 // i would like to have a resizeable SVG component
@@ -100,7 +93,7 @@ const MAX_SLOPE = 10;
 const MAX_RADIUS = 0.9;
 const MIN_RADIUS = 0.1;
 
-@Component({ components: {} })
+@Component({ components: { SVGComponent, SVGDrag } })
 export default class TestBed extends Vue {
   svgWid = 700;
   svgHgt = 700;
@@ -319,6 +312,16 @@ export default class TestBed extends Vue {
   }
   get strokeWid() {
     return this.sqSize / this.svgWid;
+  }
+  get SVGParam(): SVGConfig {
+    return {
+      svgHgt: this.svgHgt,
+      svgWid: this.svgWid,
+      vwTop: this.upLeft,
+      vwLeft: this.upLeft,
+      vwWidth: this.sqSize,
+      vwHeight: this.sqSize
+    };
   }
 }
 </script>
