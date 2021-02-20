@@ -103,13 +103,6 @@ export default class TestBed extends Vue {
   hndX = 0;
   hndY = 0;
 
-  dragging: SVGGElement | null = null;
-  dragAngle: SVGGElement | null = null;
-  doffsX = 0;
-  doffsY = 0;
-  aoffsX = 0;
-  aoffsY = 0;
-
   // this is a bootstrapped array
   arrCir: Array<Circle> = [
     { x: 0, y: 0, b: -1 },
