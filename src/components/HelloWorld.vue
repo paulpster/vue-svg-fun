@@ -9,8 +9,8 @@
       working pretty well. Other things to work on:
     </p>
     <ul>
-      <li>Componentize the SVG canvas.</li>
-      <li>Componentize the SVG drag and drop stuff.</li>
+      <li><b>DONE:</b> Componentize the SVG canvas.</li>
+      <li><b>DONE:</b> Componentize the SVG drag and drop stuff.</li>
       <li>Add pan and zoom to the SVG canvas.</li>
       <li>Allow for recursive drawing inside chosen inner circles.</li>
       <li>Printing would be nice.</li>
