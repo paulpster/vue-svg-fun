@@ -24,7 +24,7 @@
         where the last circle was drawn.
       </li>
       <li>
-        Maybe create a back end some time to save the settings use to create a
+        Maybe create a back end some time to save the settings used to create a
         particular drawing.
       </li>
       <li>Well, make all the other drawing things work also...</li>
