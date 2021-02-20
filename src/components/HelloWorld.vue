@@ -4,9 +4,9 @@
     <!-- do something more original -->
     <p>
       This is a vue.js V2 app to explore mathematically driven SVG graphics.
-      Right now Apollonius is the only one working, mostly. I am working on some
-      drag and drop to allow for changing the initial configuration for the
-      drawing. things to work on:
+      Right now Apollonius is the only one working, mostly. Drag and drop to
+      allow for changing the initial configuration for the drawing seems to be
+      working pretty well. Other things to work on:
     </p>
     <ul>
       <li>Componentize the SVG canvas.</li>
