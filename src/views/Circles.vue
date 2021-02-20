@@ -3,16 +3,7 @@
     <h2>Apolonian Circle Packing</h2>
     <div style="display:flex;">
       <div>
-        <svg
-          id="mysvg"
-          xmlns="http://www.w3.org/2000/svg"
-          v-bind:width="svgWid"
-          v-bind:height="svgHgt"
-          v-bind:viewBox="vwBox"
-          v-on:mouseleave="onDragEnd"
-          v-on:mouseup="onDragEnd"
-          v-on:mousemove="onDrag"
-        >
+        <SVGComponent v-bind:param="SVGParam">
           <circle
             v-for="(c, idx) in arrCir"
             v-bind:key="idx"
@@ -45,11 +36,11 @@
               v-bind:stroke-width="strokeWid"
             />
 
-            <g
-              class="svgdrag"
-              v-on:mousedown="onDragStart"
-              v-on:mouseup="onDragEnd"
-              v-on:mousemove="onDrag"
+            <SVGDrag
+              name="size"
+              v-on:on-begin-drag="onStart"
+              v-on:on-drop="onDrop"
+              v-on:on-dragging="onSzDrag"
             >
               <circle
                 class="handle"
@@ -58,12 +49,12 @@
                 v-bind:r="5 * strokeWid"
                 v-bind:stroke-width="strokeWid"
               />
-            </g>
-            <g
-              class="svgdrag"
-              v-on:mousedown="onDragStartAngle"
-              v-on:mouseup="onDragEndAngle"
-              v-on:mousemove="onDragAngle"
+            </SVGDrag>
+            <SVGDrag
+              name="angle"
+              v-on:on-begin-drag="onStart"
+              v-on:on-drop="onDrop"
+              v-on:on-dragging="onAngleDrag"
             >
               <circle
                 class="handle"
@@ -72,9 +63,9 @@
                 v-bind:r="5 * strokeWid"
                 v-bind:stroke-width="strokeWid"
               />
-            </g>
+            </SVGDrag>
           </g>
-        </svg>
+        </SVGComponent>
       </div>
       <div>
         <button v-on:click="onStep">Step</button>
@@ -94,6 +85,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import SVGComponent, { SVGConfig } from "@/components/SVG.vue";
+import SVGDrag from "@/components/SVGDrag.vue";
 import {
   Work,
   Circle,
@@ -106,7 +99,7 @@ const MAX_SLOPE = 10;
 const MAX_RADIUS = 0.9;
 const MIN_RADIUS = 0.1;
 
-@Component({ components: {} })
+@Component({ components: { SVGComponent, SVGDrag } })
 export default class Circles extends Vue {
   // I like things square (at least for now)
   svgWid = 700;
@@ -153,12 +146,6 @@ export default class Circles extends Vue {
   hndX = 0;
   hndY = 0;
 
-  dragging: SVGGElement | null = null;
-  dragAngle: SVGGElement | null = null;
-  doffsX = 0;
-  doffsY = 0;
-  aoffsX = 0;
-  aoffsY = 0;
   //
   ///////////////////////////////////
 
@@ -230,115 +217,6 @@ export default class Circles extends Vue {
 
   ///////////////////////////////////////////////
   // geometry
-  onDragStart(ev: MouseEvent): void {
-    console.log("onDragStart");
-    // the target is an element, i guess i need to cast target into the type i want
-    if (ev.target) {
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      if (c.classList.contains("svgdrag")) {
-        this.dragging = c;
-        // drag begin stuff
-        this.onStart();
-
-        const ctm = c.getScreenCTM();
-        if (ctm) {
-          //console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
-          // i think i need to take into account the current location of the element....
-          this.doffsX = this.hndX - (ev.clientX - ctm.e) / ctm.a;
-          this.doffsY = this.hndY - (ev.clientY - ctm.f) / ctm.d;
-          //console.log(`Init Grab: ${this.doffsX} ${this.doffsY}`);
-        } else {
-          console.log("no CTM");
-        }
-      }
-    }
-  }
-  onDragEnd(ev: MouseEvent): void {
-    if (ev.target && this.dragging) {
-      this.dragging = null;
-      console.log("onDragEnd");
-      //console.log(`Curr: ${this.hndX} ${this.hndY}`);
-      this.onDrop();
-    }
-    if (ev.target && this.dragAngle) {
-      this.dragAngle = null;
-      console.log("onDragAngleEnd");
-      //console.log(`DEACurr: ${this.arrCir[1].x} ${this.arrCir[1].y}`);
-      this.onDrop();
-    }
-    return;
-  }
-  onDrag(ev: MouseEvent): void {
-    if (this.dragging && ev.currentTarget) {
-      ev.preventDefault();
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      // in my case the CTM does not seem to change with element position
-      const ctm = c.getScreenCTM();
-      if (ctm) {
-        // really want a call back of some kind where i give it where the pointer is
-        //    and i get returned where i want the resulting SVG coord to be.
-        //    This will allow me to contrain movements to a line or box or arc or...
-        return this.onSzDrag(
-          this.doffsX + (ev.clientX - ctm.e) / ctm.a,
-          this.doffsY + (ev.clientY - ctm.f) / ctm.d
-        );
-      }
-    }
-    if (this.dragAngle && ev.currentTarget) {
-      return this.onDragAngle(ev);
-    }
-    return;
-  }
-  onDragStartAngle(ev: MouseEvent) {
-    console.log("onDragStart");
-    // the target is an element, i guess i need to cast target into the type i want
-    if (ev.target) {
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      if (c.classList.contains("svgdrag")) {
-        this.dragAngle = c;
-        // drag begin stuff
-        this.onStart();
-
-        const ctm = c.getScreenCTM();
-        if (ctm) {
-          //console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
-          // i think i need to take into account the current location of the element....
-          this.aoffsX = this.arrCir[1].x - (ev.clientX - ctm.e) / ctm.a;
-          this.aoffsY = this.arrCir[1].y - (ev.clientY - ctm.f) / ctm.d;
-          //console.log(`Init Angle Grab: ${this.aoffsX} ${this.aoffsY}`);
-        } else {
-          console.log("no CTM");
-        }
-      }
-    }
-  }
-  onDragEndAngle(ev: MouseEvent): void {
-    if (ev.target && this.dragging) {
-      this.dragAngle = null;
-      console.log("onDragEndAngle");
-      //console.log(`ACurr: ${this.arrCir[1].x} ${this.arrCir[1].y}`);
-      this.onDrop();
-    }
-    return;
-  }
-  onDragAngle(ev: MouseEvent): void {
-    if (this.dragAngle && ev.currentTarget) {
-      ev.preventDefault();
-      const c: SVGGElement = ev.currentTarget as SVGGElement;
-      // in my case the CTM does not seem to change with element position
-      const ctm = c.getScreenCTM();
-      if (ctm) {
-        // really want a call back of some kind where i give it where the pointer is
-        //    and i get returned where i want the resulting SVG coord to be.
-        //    This will allow me to contrain movements to a line or box or arc or...
-        this.onAngleDrag(
-          this.aoffsX + (ev.clientX - ctm.e) / ctm.a,
-          this.aoffsY + (ev.clientY - ctm.f) / ctm.d
-        );
-      }
-    }
-    return;
-  }
   onStart(): void {
     this.work = [];
     this.arrCir.pop();
@@ -356,11 +234,6 @@ export default class Circles extends Vue {
       { cir: 4, depth: 1, parents: [0, 1, 2] }
     ];
 
-    return;
-  }
-  onDragOver(): void {
-    console.log("onDragOver");
-    // prevent default
     return;
   }
   onSzDrag(curX: number, curY: number): void {
@@ -440,11 +313,18 @@ export default class Circles extends Vue {
     //return true;
     return 1 / (this.strokeWid * 2);
   }
-  get vwBox() {
-    return `${this.upLeft} ${this.upLeft} ${this.sqSize} ${this.sqSize}`;
-  }
   get strokeWid() {
     return this.sqSize / this.svgWid;
+  }
+  get SVGParam(): SVGConfig {
+    return {
+      svgHgt: this.svgHgt,
+      svgWid: this.svgWid,
+      vwTop: this.upLeft,
+      vwLeft: this.upLeft,
+      vwWidth: this.sqSize,
+      vwHeight: this.sqSize
+    };
   }
 }
 </script>
