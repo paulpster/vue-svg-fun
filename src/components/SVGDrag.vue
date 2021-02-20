@@ -15,6 +15,8 @@ import { Vue, Prop, Component } from "vue-property-decorator";
 
 // want a generic SVG dragger.
 // I will need to hook into the parent SVG element to add and remove some event listeners
+// perhaps wish to add a drag over concept at some point.
+//
 // events:
 //    on-begin-drag: element offset (svg coord)
 //    on-drop
