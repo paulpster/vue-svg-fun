@@ -16,6 +16,13 @@
           <!-- stuff to help DND configs visually, needs to disappear when not adjustment time -->
           <circle
             class="mark"
+            cx="0.9"
+            cy="0.9"
+            v-bind:r="2 * strokeWid"
+            v-bind:stroke-width="strokeWid"
+          />
+          <circle
+            class="mark"
             v-bind:cx="arrCir[2].x"
             v-bind:cy="arrCir[2].y"
             v-bind:r="2 * strokeWid"
@@ -102,6 +109,8 @@ export default class TestBed extends Vue {
 
   hndX = 0;
   hndY = 0;
+  angX = 0;
+  angY = 0;
 
   // this is a bootstrapped array
   arrCir: Array<Circle> = [
@@ -142,6 +151,7 @@ export default class TestBed extends Vue {
     return;
   }
   onSzDrag(curX: number, curY: number): void {
+    //console.log(`TestBed::onSzDrag ${curX},${curY}`);
     this.hndX = curX;
     this.hndY = curY;
     let xi = (curX * curX + curY * curY - 1) / (2 + 2 * curX);
@@ -173,7 +183,8 @@ export default class TestBed extends Vue {
       y: curY,
       b: 0
     });
-
+    this.angX = curX;
+    this.angY = curY;
     // examine the math on this for simplifications (bend vs radius)
     // TODO: these should probably be get type functions
     this.hndX =
