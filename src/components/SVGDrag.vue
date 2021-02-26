@@ -43,11 +43,14 @@ export default class SVGDrag extends Vue {
         if (ctm) {
           //console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
           // i think i need to take into account the current location of the element....
-          this.offsX = -(ev.clientX - ctm.e) / ctm.a;
-          this.offsY = -(ev.clientY - ctm.f) / ctm.d;
+          this.offsX = (ev.clientX - ctm.e) / ctm.a;
+          this.offsY = (ev.clientY - ctm.f) / ctm.d;
         }
-        console.log(`SVGDrag::onDragStart ${this.name}`);
+        console.log(
+          `SVGDrag::onDragStart ${this.name} ${this.offsX}, ${this.offsY}`
+        );
         // drag begin stuff
+        // this is the offset on the clicked element, what is the position on the canvas?
         this.$emit("on-begin-drag", this.offsX, this.offsY);
       }
     }
@@ -77,8 +80,8 @@ export default class SVGDrag extends Vue {
         //    This will allow me to constrain movements to a line or box or arc or...
         this.$emit(
           "on-dragging",
-          this.offsX + (ev.clientX - ctm.e) / ctm.a,
-          this.offsY + (ev.clientY - ctm.f) / ctm.d
+          (ev.clientX - ctm.e) / ctm.a /*- this.offsX*/,
+          (ev.clientY - ctm.f) / ctm.d //- this.offsY
         );
       }
     }
@@ -110,7 +113,6 @@ export default class SVGDrag extends Vue {
 
   //////////////////////////////////////////
   // lifecycle things....
-  //    the parent SVGComponent gets these called, why not me?
   mounted() {
     const myself = this.$el as SVGGElement;
 
