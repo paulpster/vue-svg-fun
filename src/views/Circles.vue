@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Apolonian Circle Packing</h2>
+    <h2>Apollonian Circle Packing</h2>
     <div>
       <div>
         <button v-on:click="onStep">Step</button>
@@ -173,7 +173,8 @@ export default class Circles extends Vue {
   }
   onPrint() {
     // some day...
-    //this.amConfiguring = false;
+    this.amConfiguring = false;
+    window.print();
     return;
   }
   animNext(): void {
