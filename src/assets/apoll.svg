@@ -4,15 +4,17 @@
   height="200"
   viewBox="-1.01 -1.01 2.02 2.02"
 >
-  <circle cx="0" cy="0" r="1" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="0.5" cy="0" r="0.5" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="-0.5" cy="0" r="0.5" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="0" cy="0.666" r="0.333" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="0" cy="-0.666" r="0.333" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="0.5" cy="0.666" r="0.166" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="-0.5" cy="0.666" r="0.166" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="0" cy="0.266" r="0.066" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="0.5" cy="-0.666" r="0.166" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="-0.5" cy="-0.666" r="0.166" stroke-width="0.01" style="fill:none; stroke:black;"></circle>
-  <circle cx="0" cy="-0.266" r="0.066" stroke-width="0.01" style="fill:none; stroke:black;"></circle>  
+  <g stroke-width="0.01"  style="fill:none; stroke:black;">
+    <circle cx="0" cy="0" r="1"></circle>
+    <circle cx="0.5" cy="0" r="0.5"></circle>
+    <circle cx="-0.5" cy="0" r="0.5"></circle>
+    <circle cx="0" cy="0.666" r="0.333"></circle>
+    <circle cx="0" cy="-0.666" r="0.333"></circle>
+    <circle cx="0.5" cy="0.666" r="0.166"></circle>
+    <circle cx="-0.5" cy="0.666" r="0.166"></circle>
+    <circle cx="0" cy="0.266" r="0.066"></circle>
+    <circle cx="0.5" cy="-0.666" r="0.166"></circle>
+    <circle cx="-0.5" cy="-0.666" r="0.166"></circle>
+    <circle cx="0" cy="-0.266" r="0.066"></circle>  
+  </g>
  </svg>
