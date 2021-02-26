@@ -172,7 +172,7 @@ export default class Circles extends Vue {
     this.hndY = 0;
   }
   onPrint() {
-    // some day...
+    // some day I would like to alter things so that I take advantage of the printer resolution...
     this.amConfiguring = false;
     window.print();
     return;
