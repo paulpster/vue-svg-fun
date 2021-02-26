@@ -1,7 +1,8 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <!-- 200x200 -->
+    <img alt="Vue logo" src="../assets/apoll.svg" />
+    <HelloWorld msg="Welcome to My Vue.js App" />
   </div>
 </template>
 
@@ -13,3 +14,10 @@ import HelloWorld from "@/components/HelloWorld.vue";
 @Component({ components: { HelloWorld } })
 export default class Home extends Vue {}
 </script>
+
+<style scoped>
+svg circle {
+  fill: none;
+  stroke: black;
+}
+</style>

@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <!-- do something more original -->
-    <p>
+    <p style="width: 50%;">
       This is a vue.js V2 app to explore mathematically driven SVG graphics.
       Right now Apollonius is the only one working, mostly. Drag and drop to
       allow for changing the initial configuration for the drawing seems to be

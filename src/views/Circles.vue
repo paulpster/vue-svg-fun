@@ -1,7 +1,19 @@
 <template>
   <div>
     <h2>Apolonian Circle Packing</h2>
-    <div style="display:flex;">
+    <div>
+      <div>
+        <button v-on:click="onStep">Step</button>
+        <button v-on:click="onAnimate">Animate</button>
+        <button v-on:click="onAll">All</button>
+        <button v-on:click="onReset">Reset</button>
+        <button v-on:click="onPrint">Print?</button>
+        <!--<div v-for="(c, idx) in arrCir" v-bind:key="idx">
+          {{ idx }}: x:{{ fmt.format(c.x) }} y:{{ fmt.format(c.y) }} b:{{
+            fmt.format(c.b)
+          }}
+        </div>-->
+      </div>
       <div>
         <SVGComponent v-bind:param="SVGParam">
           <circle
@@ -66,18 +78,6 @@
             </SVGDrag>
           </g>
         </SVGComponent>
-      </div>
-      <div>
-        <button v-on:click="onStep">Step</button>
-        <button v-on:click="onAnimate">Animate</button>
-        <button v-on:click="onAll">All</button>
-        <button v-on:click="onReset">Reset</button>
-        <button v-on:click="onPrint">Print?</button>
-        <!--<div v-for="(c, idx) in arrCir" v-bind:key="idx">
-          {{ idx }}: x:{{ fmt.format(c.x) }} y:{{ fmt.format(c.y) }} b:{{
-            fmt.format(c.b)
-          }}
-        </div>-->
       </div>
     </div>
   </div>

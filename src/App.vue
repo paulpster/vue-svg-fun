@@ -1,19 +1,21 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/circles">Apollonius</router-link> |
-      <router-link to="/drawing">Drawing Machine</router-link> |
-      <router-link to="/grids">Grids</router-link> |
-      <router-link to="/guilloche">Guilloche</router-link> |
-      <router-link to="/penrose">Penrose</router-link> |
-      <router-link to="/spiro">Spirograph</router-link> |
-      <router-link to="/tessel">Tesselations</router-link> |
-      <router-link to="/tiling">Tiling</router-link> |
-      <router-link to="/testbed">Test Bed</router-link>
+      <div><router-link to="/">Home</router-link></div>
+      <div><router-link to="/circles">Apollonius</router-link></div>
+      <div><router-link to="/drawing">Drawing Machine</router-link></div>
+      <div><router-link to="/grids">Grids</router-link></div>
+      <div><router-link to="/guilloche">Guilloche</router-link></div>
+      <div><router-link to="/penrose">Penrose</router-link></div>
+      <div><router-link to="/spiro">Spirograph</router-link></div>
+      <div><router-link to="/tessel">Tesselations</router-link></div>
+      <div><router-link to="/tiling">Tiling</router-link></div>
+      <div><router-link to="/about">About</router-link></div>
+      <div><router-link to="/testbed">Test Bed</router-link></div>
     </div>
-    <router-view />
+    <div id="content">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -24,17 +26,19 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  display: flex;
 }
 #nav {
-  padding: 30px;
+  padding: 2rem;
 }
-
 #nav a {
   font-weight: bold;
   color: #2c3e50;
 }
-
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+#content {
+  margin: 1rem;
 }
 </style>
