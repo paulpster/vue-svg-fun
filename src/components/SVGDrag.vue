@@ -39,6 +39,9 @@ export default class SVGDrag extends Vue {
       if (c.classList.contains("svgdrag")) {
         this.amDragging = true;
 
+        // https://www.w3.org/TR/SVGTiny12/coords.html#TransformMatrixDefined
+        //  x_screen = a*x_svg + c*y_svg + e
+        //  y_screen = b*x_svg + d*y_svg + f
         const ctm = c.getScreenCTM();
         if (ctm) {
           //console.log(`CTM ${ctm.a} ${ctm.d} ${ctm.e} ${ctm.f}`);
@@ -72,12 +75,14 @@ export default class SVGDrag extends Vue {
       ev.preventDefault;
       //console.log(`SVGDrag::onDrag ${this.name}`);
       const c: SVGGElement = ev.currentTarget as SVGGElement;
-      // in my case the CTM does not seem to change with element position
       const ctm = c.getScreenCTM();
       if (ctm) {
         // really want a call back of some kind where i give it where the pointer is
         //    and i get returned where i want the resulting SVG coord to be.
         //    This will allow me to constrain movements to a line or box or arc or...
+
+        // this only appears to work well with small objects, with big objects there
+        //    is a big jump to align things. need to fix that sometime TODO
         this.$emit(
           "on-dragging",
           (ev.clientX - ctm.e) / ctm.a /*- this.offsX*/,
