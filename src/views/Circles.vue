@@ -1,90 +1,84 @@
 <template>
-  <div>
-    <h2>Apollonian Circle Packing</h2>
-    <div>
-      <div>
-        <button v-on:click="onStep">Step</button>
-        <button v-on:click="onAnimate">Animate</button>
-        <button v-on:click="onAll">All</button>
-        <button v-on:click="onReset">Reset</button>
-        <button v-on:click="onPrint">Print?</button>
-        <!--<div v-for="(c, idx) in arrCir" v-bind:key="idx">
-          {{ idx }}: x:{{ fmt.format(c.x) }} y:{{ fmt.format(c.y) }} b:{{
-            fmt.format(c.b)
-          }}
-        </div>-->
-      </div>
-      <div>
-        <SVGComponent v-bind:param="SVGParam">
+  <ContentLayout>
+    <template v-slot:title>
+      <h2>Apollonian Circle Packing</h2>
+    </template>
+    <SVGComponent v-bind:param="SVGParam">
+      <circle
+        v-for="(c, idx) in arrCir"
+        v-bind:key="idx"
+        v-bind:cx="c.x"
+        v-bind:cy="c.y"
+        v-bind:r="Math.abs(1 / c.b)"
+        v-bind:stroke-width="strokeWid"
+      />
+      <g v-if="showGeomCtrl">
+        <!-- stuff to help DND configs visually, needs to disappear when not adjustment time -->
+        <circle
+          class="mark"
+          v-bind:cx="arrCir[2].x"
+          v-bind:cy="arrCir[2].y"
+          v-bind:r="2 * strokeWid"
+          v-bind:stroke-width="strokeWid"
+        />
+        <circle
+          class="mark"
+          v-bind:cx="arrCir[1].x"
+          v-bind:cy="arrCir[1].y"
+          v-bind:r="2 * strokeWid"
+          v-bind:stroke-width="strokeWid"
+        />
+        <line
+          v-bind:x1="arrCir[2].x"
+          v-bind:y1="arrCir[2].y"
+          v-bind:x2="arrCir[1].x"
+          v-bind:y2="arrCir[1].y"
+          v-bind:stroke-width="strokeWid"
+        />
+
+        <SVGDrag
+          name="size"
+          v-on:on-begin-drag="onStart"
+          v-on:on-drop="onDrop"
+          v-on:on-dragging="onSzDrag"
+        >
           <circle
-            v-for="(c, idx) in arrCir"
-            v-bind:key="idx"
-            v-bind:cx="c.x"
-            v-bind:cy="c.y"
-            v-bind:r="Math.abs(1 / c.b)"
+            class="handle"
+            v-bind:cx="hndX"
+            v-bind:cy="hndY"
+            v-bind:r="5 * strokeWid"
             v-bind:stroke-width="strokeWid"
           />
-          <g v-if="showGeomCtrl">
-            <!-- stuff to help DND configs visually, needs to disappear when not adjustment time -->
-            <circle
-              class="mark"
-              v-bind:cx="arrCir[2].x"
-              v-bind:cy="arrCir[2].y"
-              v-bind:r="2 * strokeWid"
-              v-bind:stroke-width="strokeWid"
-            />
-            <circle
-              class="mark"
-              v-bind:cx="arrCir[1].x"
-              v-bind:cy="arrCir[1].y"
-              v-bind:r="2 * strokeWid"
-              v-bind:stroke-width="strokeWid"
-            />
-            <line
-              v-bind:x1="arrCir[2].x"
-              v-bind:y1="arrCir[2].y"
-              v-bind:x2="arrCir[1].x"
-              v-bind:y2="arrCir[1].y"
-              v-bind:stroke-width="strokeWid"
-            />
-
-            <SVGDrag
-              name="size"
-              v-on:on-begin-drag="onStart"
-              v-on:on-drop="onDrop"
-              v-on:on-dragging="onSzDrag"
-            >
-              <circle
-                class="handle"
-                v-bind:cx="hndX"
-                v-bind:cy="hndY"
-                v-bind:r="5 * strokeWid"
-                v-bind:stroke-width="strokeWid"
-              />
-            </SVGDrag>
-            <SVGDrag
-              name="angle"
-              v-on:on-begin-drag="onStart"
-              v-on:on-drop="onDrop"
-              v-on:on-dragging="onAngleDrag"
-            >
-              <circle
-                class="handle"
-                v-bind:cx="arrCir[1].x"
-                v-bind:cy="arrCir[1].y"
-                v-bind:r="5 * strokeWid"
-                v-bind:stroke-width="strokeWid"
-              />
-            </SVGDrag>
-          </g>
-        </SVGComponent>
-      </div>
-    </div>
-  </div>
+        </SVGDrag>
+        <SVGDrag
+          name="angle"
+          v-on:on-begin-drag="onStart"
+          v-on:on-drop="onDrop"
+          v-on:on-dragging="onAngleDrag"
+        >
+          <circle
+            class="handle"
+            v-bind:cx="arrCir[1].x"
+            v-bind:cy="arrCir[1].y"
+            v-bind:r="5 * strokeWid"
+            v-bind:stroke-width="strokeWid"
+          />
+        </SVGDrag>
+      </g>
+    </SVGComponent>
+    <template v-slot:side>
+      <button v-on:click="onStep">Step</button><br />
+      <button v-on:click="onAnimate">Animate</button><br />
+      <button v-on:click="onAll">All</button><br />
+      <button v-on:click="onReset">Reset</button><br />
+      <button v-on:click="onPrint">Print</button><br />
+    </template>
+  </ContentLayout>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import ContentLayout from "@/components/ContentLayout.vue";
 import SVGComponent, { SVGConfig } from "@/components/SVG.vue";
 import SVGDrag from "@/components/SVGDrag.vue";
 import {
@@ -99,7 +93,7 @@ const MAX_SLOPE = 10;
 const MAX_RADIUS = 0.9;
 const MIN_RADIUS = 0.1;
 
-@Component({ components: { SVGComponent, SVGDrag } })
+@Component({ components: { SVGComponent, SVGDrag, ContentLayout } })
 export default class Circles extends Vue {
   // I like things square (at least for now)
   svgWid = 700;
