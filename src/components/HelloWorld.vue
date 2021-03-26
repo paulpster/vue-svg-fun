@@ -2,18 +2,24 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <!-- do something more original -->
-    <p style="width: 50%;">
-      This is a vue.js V2 app to explore mathematically driven SVG graphics.
-      Right now Apollonius is the only one working, mostly. Drag and drop to
-      allow for changing the initial configuration for the drawing seems to be
-      working pretty well. Other things to work on:
+    <p style="width: 75%;text-align:left;">
+      This is a vue.js V2 app to explore mathematically driven SVG graphics.<br />
+      <router-link to="/circles">Apollonius</router-link> is working, mostly.
+      Drag and drop to allow for changing the initial configuration for the
+      drawing is working pretty well.<br /><router-link to="/grids"
+        >Grids</router-link
+      >
+      are working with zoom (mouse wheel) and pan. There are a few more grids I
+      want to add to the collection.<br />Other things to work on:
     </p>
     <ul>
       <li><b>DONE:</b> Componentize the SVG canvas.</li>
       <li><b>DONE:</b> Componentize the SVG drag and drop stuff.</li>
-      <li>Add pan and zoom to the SVG canvas.</li>
+      <li><b>DONE:</b> Add pan and zoom to the SVG canvas.</li>
       <li>Allow for recursive drawing inside chosen inner circles.</li>
-      <li>Printing would be nice.</li>
+      <li>
+        Printing would be nice. This works. but not quite the way I would like.
+      </li>
       <li>Style this thing, make it look nicer.</li>
       <li>
         Add some kind of help to show how I came up with the math to do the
