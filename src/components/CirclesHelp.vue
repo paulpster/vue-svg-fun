@@ -47,8 +47,9 @@
       (b<sub>3</sub>z<sub>3</sub>)<sup>2</sup>&nbsp;+&nbsp;(b<sub>4</sub>z<sub>4</sub>)<sup>2</sup>)</span
     ><br />
     Where curvatures are b and the centers are on the complex plane z = x + iy.
-    This relation also yields two answers. If the centers of four of the circles
-    are known, the fifth can be calculated using:<br /><span class="equ">
+    This relation also yields two answers.<br />
+    If the centers of four of the circles are known, the fifth can be calculated
+    using:<br /><span class="equ">
       b<sub>4</sub>z<sub>4</sub>&nbsp;+&nbsp;b<sub>4</sub>'z<sub>4</sub>'&nbsp;=&nbsp;
       2(b<sub>1</sub>z<sub>1</sub>&nbsp;+&nbsp;b<sub>2</sub>z<sub>2</sub>&nbsp;+&nbsp;b<sub>3</sub>z<sub>3</sub>)</span
     ><br />
